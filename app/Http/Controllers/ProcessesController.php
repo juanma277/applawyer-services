@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use Validator;
+use DB;
+use App\Process;
+
+class ProcessesController extends Controller
+{
+    // =========================================
+    // Obtener todos los procesos
+    // =========================================
+    public function all()
+    {
+        $process = DB::select('SELECT * from proceso');
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'process' => $process
+        ]);
+    }
+
+    // =========================================
+    // Obtener los procesos Paginados
+    // =========================================
+    public function paginate($desde=0)
+    {   
+        $process = DB::select('SELECT * from proceso LIMIT 10 OFFSET '.$desde);
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen Procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'process' => $process
+        ]);
+    }
+
+    // =========================================
+    // Crear Proceso
+    // =========================================
+    public function create(Request $request)
+    {   
+        try {
+            $city = DB::table('proceso')->insert(
+                [   'tipo_proceso_id' => $request->tipo_proceso,
+                    'user_id' => $request->user, 
+                    'juzgado_id' => $request->juzgado, 
+                    'demandante' => $request->demandante, 
+                    'demandado' => $request->demandado,
+                    'radicado' => $request->radicado, 
+                    'fecha' => $request->fecha
+                    ]
+                );
+
+            return response()->json([
+                'error' => false,
+                'mensaje' => 'Proceso creado'
+            ]);
+        
+        } catch (\Illuminate\Database\QueryException $e){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+            ]);
+        }
+    }
+
+    // =========================================
+    // Obtener Proceso
+    // =========================================
+    public function getProcesses($id)
+    {   
+        $process = Process::find($id);
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existe Proceso'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'process' => $process
+        ]);
+    }
+
+    // =========================================
+    // Actualizar Proceso
+    // =========================================
+    public function update(Request $request, $id)
+    {  
+        //VERIFICAR QUE EXISTE PROCESO
+        $process = Process::find($id);
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existe Proceso'
+            ]);
+        }
+
+        try {
+            $city = DB::table('proceso')
+            ->where('id', $id)
+            ->update([  'tipo_proceso_id' => $request->tipo_proceso,
+                        'user_id' => $request->user, 
+                        'juzgado_id' => $request->juzgado, 
+                        'demandante' => $request->demandante, 
+                        'demandado' => $request->demandado,
+                        'radicado' => $request->radicado, 
+                        'fecha' => $request->fecha
+                    ]);
+
+            return response()->json([
+                'error' => false,
+                'mensaje' => 'Proceso Actualizado'
+            ]);
+        
+        } catch (\Illuminate\Database\QueryException $e){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+            ]);
+        }
+    }
+
+    // =========================================
+    // Eliminar Proceso
+    // =========================================
+    public function delete($id)
+    {  
+        //VERIFICAR QUE EXISTE EL PROCESO
+        $process = Process::find($id);
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existe proceso'
+            ]);
+        }
+
+        try {
+            DB::table('proceso')->where('id', '=', $id)->delete();
+
+            return response()->json([
+                'error' => false,
+                'mensaje' => 'Proceso Eliminado'
+            ]);
+        
+        } catch (\Illuminate\Database\QueryException $e){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'Ha ocurrido un error por favor intentalo nuevamente'
+            ]);
+        }
+    }
+}
