@@ -64,12 +64,15 @@ class UserController extends Controller
     {   
         try {
             $user = DB::table('users')->insert(
-                [   'nombres' => $request->nombres, 
-                    'apellidos' => $request->apellidos,
+                [   
+                    'nombre' => $request->nombres, 
                     'email' => $request->email,
-                    'password' => \Hash::make($request->password)
-                    ]
-                );
+                    'password' => \Hash::make($request->password),
+                    'uid' => $request->uid,
+                    'provider' => $request->provider,
+                    'notificaciones' => $request->notificaciones,
+                    'terminos' => $request->terminos
+                ]);
 
             return response()->json([
                 'error' => false,

@@ -17,13 +17,13 @@ Route::get('/', function () {
 });
 
 //GRUPO DE RUTAS DE LOGIN
-Route::group(['prefix' => 'login'], function() {
+Route::group(['prefix' => 'login', 'middleware' => 'cors'], function() {
     Route::post('log', 'LogController@log');
     Route::get('logout', 'LogController@logout');    
 });
 
 //GRUPO DE RUTAS DE USUARIO
-Route::group(['prefix' => 'users'], function() {
+Route::group(['prefix' => 'users', 'middleware' => 'cors'], function() {
     Route::get('all', 'UserController@all');
     Route::get('paginate/{desde}', 'UserController@paginate');
     Route::get('getUser/{id}', 'UserController@getUser');
@@ -33,7 +33,7 @@ Route::group(['prefix' => 'users'], function() {
 });
 
 //GRUPO DE RUTAS DE TIPOS DE PROCESOS
-Route::group(['prefix' => 'typeProcesses'], function() {
+Route::group(['prefix' => 'typeProcesses', 'middleware' => 'cors'], function() {
     Route::get('all', 'TypeProcessesController@all');
     Route::get('paginate/{desde}', 'TypeProcessesController@paginate');
     Route::get('getProcesses/{id}', 'TypeProcessesController@getProcesses');
@@ -43,7 +43,7 @@ Route::group(['prefix' => 'typeProcesses'], function() {
 });
 
 //GRUPO DE RUTAS DE PROCESOS
-Route::group(['prefix' => 'processes'], function() {
+Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::get('all', 'ProcessesController@all');
     Route::get('paginate/{desde}', 'ProcessesController@paginate');
     Route::get('getProcesses/{id}', 'ProcessesController@getProcesses');
@@ -53,7 +53,7 @@ Route::group(['prefix' => 'processes'], function() {
 });
 
 //GRUPO DE RUTAS DE JUZGADOS
-Route::group(['prefix' => 'court'], function() {
+Route::group(['prefix' => 'court', 'middleware' => 'cors'], function() {
     Route::get('all', 'CourtController@all');
     Route::get('paginate/{desde}', 'CourtController@paginate');
     Route::get('getCourt/{id}', 'CourtController@getCourt');
@@ -63,7 +63,7 @@ Route::group(['prefix' => 'court'], function() {
 });
 
 //GRUPO DE RUTAS DE HISTORIAL PROCESOS
-Route::group(['prefix' => 'history'], function() {
+Route::group(['prefix' => 'history', 'middleware' => 'cors'], function() {
     Route::get('all', 'HistoryController@all');
     Route::get('paginate/{desde}', 'HistoryController@paginate');
     Route::get('getHistory/{id}', 'HistoryController@getHistory');
@@ -73,13 +73,18 @@ Route::group(['prefix' => 'history'], function() {
 });
 
 //GRUPO DE RUTAS DE CIUDADES
-Route::group(['prefix' => 'cities'], function() {
+Route::group(['prefix' => 'cities', 'middleware' => 'cors'], function() {
     Route::get('all', 'CiudadController@all');
     Route::get('paginate/{desde}', 'CiudadController@paginate');
     Route::get('getCities/{id}', 'CiudadController@getCities');
     Route::put('update/{id}', 'CiudadController@update');
     Route::delete('delete/{id}', 'CiudadController@delete');
     Route::post('create', 'CiudadController@create');        
+});
+
+//GRUPO DE RUTAS PARA ENVIAR MAILS
+Route::group(['prefix' => 'mails', 'middleware' => 'cors'], function() {
+    Route::post('rememberPassword', 'MailController@rememberPassword');
 });
 
 

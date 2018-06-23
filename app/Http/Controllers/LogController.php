@@ -27,7 +27,7 @@ class LogController extends Controller
             ]);
         }else{
             return response()->json([
-                'error' => false,
+                'error' => true,
                 'mensaje' => 'Datos Incorrectos',
             ]);
         }
@@ -43,6 +43,5 @@ class LogController extends Controller
         ]);
 
     }
-
     
 }

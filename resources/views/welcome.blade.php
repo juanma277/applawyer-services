@@ -3,7 +3,7 @@
     <head>
         <title>Laravel</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
 
         <style>
             html, body {
@@ -32,6 +32,7 @@
 
             .title {
                 font-size: 96px;
+                font-family: 'Dancing Script', cursive;
             }
         </style>
     </head>
