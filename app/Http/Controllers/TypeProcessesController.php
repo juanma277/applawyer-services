@@ -34,6 +34,28 @@ class TypeProcessesController extends Controller
         ]);
     }
 
+    // ===========================================
+    // Obtener todos los Tipos de Procesos Activos
+    // ===========================================
+    public function activos()
+    {
+        $types = DB::select("SELECT * from tipo_proceso WHERE estado ='ACTIVO'");
+
+        if(empty($types)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($types),
+                'mensaje' => 'No existen tipos de procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($types),
+            'types' => $types
+        ]);
+    }
+
     // =========================================
     // Obtener los Tipos de Procesos Paginados
     // =========================================

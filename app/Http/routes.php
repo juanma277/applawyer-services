@@ -35,6 +35,7 @@ Route::group(['prefix' => 'users', 'middleware' => 'cors'], function() {
 //GRUPO DE RUTAS DE TIPOS DE PROCESOS
 Route::group(['prefix' => 'typeProcesses', 'middleware' => 'cors'], function() {
     Route::get('all', 'TypeProcessesController@all');
+    Route::get('activos', 'TypeProcessesController@activos');
     Route::get('paginate/{desde}', 'TypeProcessesController@paginate');
     Route::get('getProcesses/{id}', 'TypeProcessesController@getProcesses');
     Route::put('update/{id}', 'TypeProcessesController@update');
@@ -47,6 +48,7 @@ Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::get('all', 'ProcessesController@all');
     Route::get('paginate/{desde}', 'ProcessesController@paginate');
     Route::get('getProcesses/{id}', 'ProcessesController@getProcesses');
+    Route::get('getProcessesUser/{id}', 'ProcessesController@allUsuer');
     Route::put('update/{id}', 'ProcessesController@update');
     Route::delete('delete/{id}', 'ProcessesController@delete');
     Route::post('create', 'ProcessesController@create');        
@@ -55,6 +57,7 @@ Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
 //GRUPO DE RUTAS DE JUZGADOS
 Route::group(['prefix' => 'court', 'middleware' => 'cors'], function() {
     Route::get('all', 'CourtController@all');
+    Route::get('activos', 'CourtController@activos');
     Route::get('paginate/{desde}', 'CourtController@paginate');
     Route::get('getCourt/{id}', 'CourtController@getCourt');
     Route::put('update/{id}', 'CourtController@update');
@@ -85,6 +88,17 @@ Route::group(['prefix' => 'cities', 'middleware' => 'cors'], function() {
 //GRUPO DE RUTAS PARA ENVIAR MAILS
 Route::group(['prefix' => 'mails', 'middleware' => 'cors'], function() {
     Route::post('rememberPassword', 'MailController@rememberPassword');
+});
+
+//GRUPO DE RUTAS DE ALARMAS
+Route::group(['prefix' => 'alarmas', 'middleware' => 'cors'], function() {
+    Route::get('all', 'AlarmaController@all');
+    Route::get('allAlarmas/{id}', 'AlarmaController@allAlarmas');
+    Route::get('paginate/{desde}', 'AlarmaController@paginate');
+    Route::get('getAlarma/{id}', 'AlarmaController@getAlarma');
+    Route::put('update/{id}', 'AlarmaController@update');
+    Route::delete('delete/{alarma_id}/{proceso_id}', 'AlarmaController@delete');
+    Route::post('create', 'AlarmaController@create');        
 });
 
 

@@ -34,6 +34,28 @@ class CourtController extends Controller
         ]);
     }
 
+    // ===========================================
+    // Obtener todos los Juzgados Activos
+    // ===========================================
+    public function activos()
+    {
+        $courts = DB::select("SELECT juzgado.*, ciudad.nombre AS ciudad FROM juzgado JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE juzgado.estado = 'ACTIVO'");
+
+        if(empty($courts)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($courts),
+                'mensaje' => 'No existen Juzgados'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($courts),
+            'courts' => $courts
+        ]);
+    }
+
     // =========================================
     // Obtener los juzgados Paginados
     // =========================================
