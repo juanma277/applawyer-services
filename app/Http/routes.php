@@ -101,4 +101,20 @@ Route::group(['prefix' => 'alarmas', 'middleware' => 'cors'], function() {
     Route::post('create', 'AlarmaController@create');        
 });
 
+//GRUPO DE RUTAS DE ADJUNTOS
+Route::group(['prefix' => 'adjuntos', 'middleware' => 'cors'], function() {
+    Route::get('all', 'AdjuntoController@all');
+    Route::get('allAdjuntos/{id}', 'AdjuntoController@allAdjuntos');
+    Route::get('paginate/{desde}', 'AdjuntoController@paginate');
+    Route::get('getAdjunto/{id}', 'AdjuntoController@getAdjunto');
+    Route::put('update/{id}', 'AdjuntoController@update');
+    Route::delete('delete/{adjunto_id}/{proceso_id}', 'AdjuntoController@delete');
+    Route::post('create', 'AdjuntoController@create');        
+});
+
+//GRUPO DE RUTAS PARA VER IMAGENES
+Route::group(['prefix' => 'images', 'middleware' => 'cors'], function() {
+    Route::get('adjuntos/{archivo}', 'ImagenController@adjunto');
+});
+
 

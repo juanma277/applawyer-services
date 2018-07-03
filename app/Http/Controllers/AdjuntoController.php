@@ -106,8 +106,8 @@ class AdjuntoController extends Controller
     {   
         $imagen = explode(',', $request->archivo );
         $data = base64_decode($imagen[1]);
-        $archivo = $request->proceso_id+"-"+rand()+".png";
-        $filepath = "/public/storage/"+$archivo;
+        $archivo = $request->proceso_id."-".rand().".png";
+        $filepath = public_path('images/adjuntos/'.$archivo);
 
         file_put_contents($filepath, $data);
 
@@ -123,7 +123,7 @@ class AdjuntoController extends Controller
             return response()->json([
                 'error' => false,
                 'mensaje' => 'Adjunto creado',
-                'alarma' => $alarma
+                'adjunto' => $adjunto
             ]);
         
         } catch (\Illuminate\Database\QueryException $e){
