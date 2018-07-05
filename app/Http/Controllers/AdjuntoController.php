@@ -62,7 +62,7 @@ class AdjuntoController extends Controller
     // =========================================
     public function getAdjunto($id)
     {
-        $adjunto = Alarma::find($id);
+        $adjunto = Adjunto::find($id);
 
         if(empty($adjunto)){
             return response()->json([
@@ -116,7 +116,7 @@ class AdjuntoController extends Controller
                     [   
                         'proceso_id' => $request->proceso_id,
                         'descripcion' => $request->descripcion, 
-                        'archivo' => $request->archivo 
+                        'archivo' => $archivo 
                     ]
                 );
 
@@ -139,38 +139,71 @@ class AdjuntoController extends Controller
     // =========================================
     public function update(Request $request, $id)
     {  
-        //VERIFICAR QUE EXISTE ALARMA
-        $alarma = Alarma::find($id);
-        if(empty($alarma)){
+        //VERIFICAR QUE EXISTE EL ADJUNTO
+        $adjunto = Adjunto::find($id);
+        if(empty($adjunto)){
             return response()->json([
                 'error' => true,
-                'mensaje' => 'No existe Alarma'
+                'mensaje' => 'No existe Adjunto'
             ]);
         }
 
-        try {
-            $alarma = DB::table('alarmas')
-            ->where('id', $id)
-            ->update([  
-                        'descripcion' => $request->descripcion, 
-                        'fecha' => $request->fecha, 
-                        'hora' => $request->hora 
-                    ]);
+        //VERIFICAR SI SE VA A CAMBIAR LA IMAGEN 
+        if($request->archivo === null){
+            try {
+                $adjunto = DB::table('adjuntos')
+                ->where('id', $id)
+                ->update([  
+                            'proceso_id' => $request->proceso_id,
+                            'descripcion' => $request->descripcion, 
+                        ]);
+                
+                $adjuntos = DB::select("SELECT * from adjuntos WHERE proceso_id =".$request->proceso_id);
+    
+                return response()->json([
+                    'error' => false,
+                    'mensaje' => 'Adjunto Actualizado',
+                    'adjuntos' => $adjuntos
+                ]);
             
-            $alarmas = DB::select("SELECT * from alarmas WHERE proceso_id =".$request->proceso_id);
+            } catch (\Illuminate\Database\QueryException $e){
+                return response()->json([
+                    'error' => true,
+                    'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+                ]);
+            }
+        }else{
+            
+            $imagen = explode(',', $request->archivo );
+            $data = base64_decode($imagen[1]);
+            $archivo = $request->proceso_id."-".rand().".png";
+            $filepath = public_path('images/adjuntos/'.$archivo);
 
-            return response()->json([
-                'error' => false,
-                'mensaje' => 'Alarma Actualizada',
-                'alarmas' => $alarmas
-            ]);
-        
-        } catch (\Illuminate\Database\QueryException $e){
-            return response()->json([
-                'error' => true,
-                'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
-            ]);
-        }
+            file_put_contents($filepath, $data);
+            try {
+                $adjunto = DB::table('adjuntos')
+                ->where('id', $id)
+                ->update([  
+                            'proceso_id' => $request->proceso_id,
+                            'descripcion' => $request->descripcion, 
+                            'archivo' => $archivo
+                        ]);
+                
+                $adjuntos = DB::select("SELECT * from adjuntos WHERE proceso_id =".$request->proceso_id);
+    
+                return response()->json([
+                    'error' => false,
+                    'mensaje' => 'Adjunto Actualizado',
+                    'adjuntos' => $adjuntos
+                ]);
+            
+            } catch (\Illuminate\Database\QueryException $e){
+                return response()->json([
+                    'error' => true,
+                    'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+                ]);
+            }
+        } 
     }
 
     // =========================================

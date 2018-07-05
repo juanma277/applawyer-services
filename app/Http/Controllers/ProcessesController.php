@@ -175,7 +175,7 @@ class ProcessesController extends Controller
     // =========================================
     // Eliminar Proceso
     // =========================================
-    public function delete($id)
+    public function delete($id, $user_id)
     {  
         //VERIFICAR QUE EXISTE EL PROCESO
         $process = Process::find($id);
@@ -189,9 +189,12 @@ class ProcessesController extends Controller
         try {
             DB::table('proceso')->where('id', '=', $id)->delete();
 
+            $process = DB::select("SELECT * from proceso WHERE user_id =".$user_id);
+
             return response()->json([
                 'error' => false,
-                'mensaje' => 'Proceso Eliminado'
+                'mensaje' => 'Proceso Eliminado',
+                'procesos' => $process
             ]);
         
         } catch (\Illuminate\Database\QueryException $e){

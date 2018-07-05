@@ -124,9 +124,47 @@ class UserController extends Controller
         try {
             $user = DB::table('users')
             ->where('id', $id)
-            ->update(['nombres' => $request->nombres, 
-                      'apellidos' => $request->apellidos,
-                      'email' => $request->email
+            ->update([
+                        'nombre' => $request->nombres, 
+                        'email' => $request->email,
+                        'notificaciones' => $request->notificaciones
+                    ]);
+
+            $user = User::find($id);
+
+            return response()->json([
+                'error' => false,
+                'mensaje' => 'Usuario Actualizado',
+                'usuario' => $user
+            ]);
+        
+        } catch (\Illuminate\Database\QueryException $e){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+            ]);
+        }
+    }
+
+    // =========================================
+    // Actualizar Contraseña de Usuario
+    // =========================================
+    public function updatePassword(Request $request, $id)
+    {  
+        //VERIFICAR QUE EXISTE EL USUARIO
+        $user = User::find($id);
+        if(empty($user)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existe usuario'
+            ]);
+        }
+
+        try {
+            $user = DB::table('users')
+            ->where('id', $id)
+            ->update([
+                        'password' => \Hash::make($request->password)
                     ]);
 
             return response()->json([
@@ -140,6 +178,58 @@ class UserController extends Controller
                 'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
             ]);
         }
+    }
+
+    // =========================================
+    // Actualizar Imagen de Usuario
+    // =========================================
+    public function updateImagen(Request $request, $id)
+    {  
+        //VERIFICAR QUE EXISTE EL USUARIO
+        $user = User::find($id);
+        if(empty($user)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existe usuario'
+            ]);
+        }
+
+        //VERIFICAR QUE SE ENVIA IMAGEN
+        if($request->archivo === null){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No hay selección de imagen'
+            ]);            
+        }
+
+            $imagen = explode(',', $request->archivo );
+            $data = base64_decode($imagen[1]);
+            $archivo = $id."-".rand().".png";
+            $filepath = public_path('images/users/'.$archivo);
+
+            file_put_contents($filepath, $data);
+
+            try {
+                $user = DB::table('users')
+                ->where('id', $id)
+                ->update([
+                            'imagen' => $archivo
+                        ]);
+                
+                $user = User::find($id);
+    
+                return response()->json([
+                    'error' => false,
+                    'mensaje' => 'Imagen de Usuario Actualizada',
+                    'usuario' => $user
+                ]);
+            
+            } catch (\Illuminate\Database\QueryException $e){
+                return response()->json([
+                    'error' => true,
+                    'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+                ]);
+            }
     }
 
     // =========================================

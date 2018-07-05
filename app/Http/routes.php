@@ -28,6 +28,8 @@ Route::group(['prefix' => 'users', 'middleware' => 'cors'], function() {
     Route::get('paginate/{desde}', 'UserController@paginate');
     Route::get('getUser/{id}', 'UserController@getUser');
     Route::put('update/{id}', 'UserController@update');
+    Route::put('updateImagen/{id}', 'UserController@updateImagen');
+    Route::put('updatePassword/{id}', 'UserController@updatePassword');
     Route::delete('delete/{id}', 'UserController@delete');
     Route::post('create', 'UserController@create');        
 });
@@ -50,7 +52,7 @@ Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::get('getProcesses/{id}', 'ProcessesController@getProcesses');
     Route::get('getProcessesUser/{id}', 'ProcessesController@allUsuer');
     Route::put('update/{id}', 'ProcessesController@update');
-    Route::delete('delete/{id}', 'ProcessesController@delete');
+    Route::delete('delete/{id}/{user_id}', 'ProcessesController@delete');
     Route::post('create', 'ProcessesController@create');        
 });
 
@@ -115,6 +117,7 @@ Route::group(['prefix' => 'adjuntos', 'middleware' => 'cors'], function() {
 //GRUPO DE RUTAS PARA VER IMAGENES
 Route::group(['prefix' => 'images', 'middleware' => 'cors'], function() {
     Route::get('adjuntos/{archivo}', 'ImagenController@adjunto');
+    Route::get('users/{archivo}', 'ImagenController@users');
 });
 
 

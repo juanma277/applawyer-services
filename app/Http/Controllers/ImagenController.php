@@ -18,5 +18,14 @@ class ImagenController extends Controller
        echo "<img src='/images/adjuntos/".$archivo."'>";
     }
 
+
+    // =========================================
+    // Obtener imagen de Usuario
+    // =========================================
+    public function users($archivo)
+    {
+       echo "<img src='/images/users/".$archivo."'>";
+    }
+
     
 }
