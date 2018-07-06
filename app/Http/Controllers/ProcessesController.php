@@ -80,6 +80,28 @@ class ProcessesController extends Controller
         ]);
     }
 
+    // ===============================================
+    // Obtener los procesos de un Usuario por Juzgado
+    // ===============================================
+    public function porJuzgado($id)
+    {   
+        $process = DB::select("SELECT COUNT(1) as cantidad, juzgado.nombre FROM `proceso` JOIN juzgado ON (juzgado.id = proceso.juzgado_id) WHERE user_id =".$id." GROUP BY juzgado.nombre");
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen Procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'process' => $process
+        ]);
+    }
+
     // =========================================
     // Crear Proceso
     // =========================================
