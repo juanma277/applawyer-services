@@ -15,6 +15,7 @@ class CreateCourtTable extends Migration
         Schema::create('juzgado', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
+            $table->string('abreviatura');
             $table->integer('ciudad_id')->unsigned();
             $table->foreign('ciudad_id')->references('id')->on('ciudad');
             $table->string('estado')->default('ACTIVO');                                                

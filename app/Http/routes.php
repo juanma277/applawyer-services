@@ -52,6 +52,9 @@ Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::get('getProcesses/{id}', 'ProcessesController@getProcesses');
     Route::get('getProcessesUser/{id}', 'ProcessesController@allUsuer');
     Route::get('porJuzgado/{id}', 'ProcessesController@porJuzgado');
+    Route::get('porTipo/{id}', 'ProcessesController@porTipo');
+    Route::get('porCiudad/{id}', 'ProcessesController@porCiudad');
+    Route::get('porEstado/{id}', 'ProcessesController@porEstado');
     Route::put('update/{id}', 'ProcessesController@update');
     Route::delete('delete/{id}/{user_id}', 'ProcessesController@delete');
     Route::post('create', 'ProcessesController@create');        

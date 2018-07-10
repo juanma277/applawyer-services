@@ -85,7 +85,7 @@ class ProcessesController extends Controller
     // ===============================================
     public function porJuzgado($id)
     {   
-        $process = DB::select("SELECT COUNT(1) as cantidad, juzgado.nombre FROM `proceso` JOIN juzgado ON (juzgado.id = proceso.juzgado_id) WHERE user_id =".$id." GROUP BY juzgado.nombre");
+        $process = DB::select("SELECT COUNT(1) as cantidad, juzgado.nombre, juzgado.abreviatura AS ABV  FROM `proceso` JOIN juzgado ON (juzgado.id = proceso.juzgado_id) WHERE user_id =".$id." GROUP BY juzgado.nombre");
 
         if(empty($process)){
             return response()->json([
@@ -101,6 +101,74 @@ class ProcessesController extends Controller
             'process' => $process
         ]);
     }
+
+    // ===============================================
+    // Obtener los procesos de un Usuario por Tipo
+    // ===============================================
+    public function porTipo($id)
+    {   
+        $process = DB::select("SELECT COUNT(1) as cantidad, tipo_proceso.nombre, tipo_proceso.abreviatura AS ABV  FROM `proceso` JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) WHERE user_id =".$id." GROUP BY tipo_proceso.nombre");
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen Procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'process' => $process
+        ]);
+    }
+
+    // ===============================================
+    // Obtener los procesos de un Usuario por Ciudad
+    // ===============================================
+    public function porCiudad($id)
+    {   
+        $process = DB::select("SELECT COUNT(1) as cantidad, ciudad.nombre FROM `proceso` JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE proceso.user_id=".$id." GROUP BY ciudad.nombre");
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen Procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'process' => $process
+        ]);
+    }
+
+
+    // ===============================================
+    // Obtener los procesos de un Usuario por Estado
+    // ===============================================
+    public function porEstado($id)
+    {   
+        $process = DB::select("SELECT COUNT(1) as cantidad, proceso.estado FROM `proceso` WHERE proceso.user_id=".$id." GROUP BY proceso.estado");
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen Procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'process' => $process
+        ]);
+    }
+
 
     // =========================================
     // Crear Proceso

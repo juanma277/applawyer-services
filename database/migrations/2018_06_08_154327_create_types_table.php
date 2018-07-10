@@ -15,6 +15,7 @@ class CreateTypesTable extends Migration
         Schema::create('tipo_proceso', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre')->unique();
+            $table->string('abreviatura');
             $table->string('estado')->default('ACTIVO');                                                
             $table->timestamps();
         });
