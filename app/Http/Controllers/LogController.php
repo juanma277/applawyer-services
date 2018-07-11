@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 use App\Http\Requests;
 use App\Http\Requests\LoginRequest;
@@ -20,13 +22,14 @@ class LogController extends Controller
      */
     public function log(LoginRequest $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        if($token = JWTAuth::attempt(['email' => $request->email, 'password' => $request->password])){
             $procesos = DB::select('SELECT * from proceso WHERE user_id='.Auth::user()->id);
             return response()->json([
                 'error' => false,
                 'mensaje' => 'Datos Correctos',
                 'usuario' => Auth::user(),
-                'procesos' => count($procesos)
+                'procesos' => count($procesos),
+                'token' => compact('token')
             ]);
         }else{
             

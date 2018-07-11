@@ -10,6 +10,9 @@ use Validator;
 use DB;
 use App\User;
 
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 
 class UserController extends Controller
 {
