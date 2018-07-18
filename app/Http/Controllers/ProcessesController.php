@@ -51,10 +51,13 @@ class ProcessesController extends Controller
             ]);
         }
 
+        $procesoEstado = DB::select("SELECT COUNT(1) AS cantidad, proceso.estado FROM proceso WHERE proceso.user_id =".$id." GROUP BY proceso.estado");
+
         return response()->json([
             'error' => false,
             'cuenta' => count($process),
-            'process' => $process
+            'process' => $process,
+            'estados' => $procesoEstado
         ]);
     }
 

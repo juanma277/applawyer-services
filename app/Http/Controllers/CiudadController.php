@@ -52,7 +52,29 @@ class CiudadController extends Controller
         return response()->json([
             'error' => false,
             'cuenta' => count($cities),
-            'types' => $cities
+            'cities' => $cities
+        ]);
+    }
+
+    // ===========================================
+    // Obtener todas las ciudades Activos
+    // ===========================================
+    public function activos()
+    {
+        $cities = DB::select("SELECT ciudad.* FROM ciudad WHERE ciudad.estado = 'ACTIVO'");
+
+        if(empty($cities)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($cities),
+                'mensaje' => 'No existen Ciudades'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($cities),
+            'cities' => $cities
         ]);
     }
 

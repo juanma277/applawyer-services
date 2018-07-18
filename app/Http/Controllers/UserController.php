@@ -130,6 +130,10 @@ class UserController extends Controller
             ->update([
                         'nombre' => $request->nombres, 
                         'email' => $request->email,
+                        'direccion' => $request->direccion,
+                        'telefono' => $request->telefono,
+                        'profesion' => $request->profesion,
+                        'descripcion' => $request->descripcion,
                         'notificaciones' => $request->notificaciones
                     ]);
 
@@ -186,7 +190,7 @@ class UserController extends Controller
     // =========================================
     // Actualizar Imagen de Usuario
     // =========================================
-    public function updateImagen(Request $request, $id)
+    public function updateImagen(Request $request, $id, $platform)
     {  
         //VERIFICAR QUE EXISTE EL USUARIO
         $user = User::find($id);
@@ -205,7 +209,43 @@ class UserController extends Controller
             ]);            
         }
 
-            $imagen = explode(',', $request->archivo );
+        if($platform === 'web'){
+           
+            $file = $request->archivo;
+            $data = base64_decode($file['value']);
+            $archivo = $id."-".rand().".png";
+            $filepath = public_path('images/users/'.$archivo);
+
+            file_put_contents($filepath, $data);
+
+            try {
+                $user = DB::table('users')
+                ->where('id', $id)
+                ->update([
+                            'imagen' => $archivo
+                        ]);
+                
+                $user = User::find($id);
+    
+                return response()->json([
+                    'error' => false,
+                    'mensaje' => 'Imagen de Usuario Actualizada',
+                    'usuario' => $user
+                ]);
+            
+            } catch (\Illuminate\Database\QueryException $e){
+                return response()->json([
+                    'error' => true,
+                    'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+                ]);
+            }
+
+        }
+
+        
+        if($platform === 'movil'){
+            
+            $imagen = explode(',', $request->archivo);
             $data = base64_decode($imagen[1]);
             $archivo = $id."-".rand().".png";
             $filepath = public_path('images/users/'.$archivo);
@@ -233,6 +273,8 @@ class UserController extends Controller
                     'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
                 ]);
             }
+        }
+
     }
 
     // =========================================

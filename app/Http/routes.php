@@ -28,7 +28,7 @@ Route::group(['prefix' => 'users', 'middleware' => 'cors'], function() {
     Route::get('paginate/{desde}', 'UserController@paginate');
     Route::get('getUser/{id}', 'UserController@getUser');
     Route::put('update/{id}', 'UserController@update');
-    Route::put('updateImagen/{id}', 'UserController@updateImagen');
+    Route::put('updateImagen/{id}/{platform}', 'UserController@updateImagen');
     Route::put('updatePassword/{id}', 'UserController@updatePassword');
     Route::delete('delete/{id}', 'UserController@delete');
     Route::post('create', 'UserController@create');        
@@ -64,6 +64,7 @@ Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
 Route::group(['prefix' => 'court', 'middleware' => 'cors'], function() {
     Route::get('all', 'CourtController@all');
     Route::get('activos', 'CourtController@activos');
+    Route::get('cities/{id}', 'CourtController@courtCities');
     Route::get('paginate/{desde}', 'CourtController@paginate');
     Route::get('getCourt/{id}', 'CourtController@getCourt');
     Route::put('update/{id}', 'CourtController@update');
@@ -84,6 +85,7 @@ Route::group(['prefix' => 'history', 'middleware' => 'cors'], function() {
 //GRUPO DE RUTAS DE CIUDADES
 Route::group(['prefix' => 'cities', 'middleware' => 'cors'], function() {
     Route::get('all', 'CiudadController@all');
+    Route::get('activos', 'CiudadController@activos');
     Route::get('paginate/{desde}', 'CiudadController@paginate');
     Route::get('getCities/{id}', 'CiudadController@getCities');
     Route::put('update/{id}', 'CiudadController@update');
