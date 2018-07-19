@@ -208,7 +208,7 @@ class ProcessesController extends Controller
     // =========================================
     public function getProcesses($id)
     {   
-        $datosProceso = DB::select("SELECT proceso.radicado, proceso.demandante, proceso.demandado, proceso.fecha, juzgado.nombre AS juzgado, ciudad.nombre as ciudad, tipo_proceso.nombre AS tipo FROM proceso JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE proceso.id =".$id);
+        $datosProceso = DB::select("SELECT proceso.radicado, proceso.demandante, proceso.demandado, proceso.fecha, proceso.estado, juzgado.nombre AS juzgado, ciudad.nombre as ciudad, tipo_proceso.nombre AS tipo FROM proceso JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE proceso.id =".$id);
         $process = DB::select("SELECT proceso.radicado, juzgado.nombre AS juzgado, tipo_proceso.nombre AS tipo, proceso.demandante, proceso.demandado, proceso.fecha, historial_proceso.actuacion, historial_proceso.anotacion, historial_proceso.fecha FROM proceso JOIN historial_proceso ON (historial_proceso.proceso_id = proceso.id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.juzgado_id) WHERE proceso.id =".$id ." ORDER BY historial_proceso.fecha DESC");
 
         if(empty($process)){
@@ -241,7 +241,7 @@ class ProcessesController extends Controller
         }
 
         try {
-            $city = DB::table('proceso')
+            $process = DB::table('proceso')
             ->where('id', $id)
             ->update([  'tipo_proceso_id' => $request->tipo_proceso,
                         'user_id' => $request->user, 
@@ -255,6 +255,43 @@ class ProcessesController extends Controller
             return response()->json([
                 'error' => false,
                 'mensaje' => 'Proceso Actualizado'
+            ]);
+        
+        } catch (\Illuminate\Database\QueryException $e){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
+            ]);
+        }
+    }
+
+     // =========================================
+    // Actualizar Estado de Proceso
+    // =========================================
+    public function updateStatus(Request $request, $id)
+    {  
+        //VERIFICAR QUE EXISTE PROCESO
+        $process = Process::find($id);
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existe Proceso'
+            ]);
+        }
+
+        try {
+            $process = DB::table('proceso')
+            ->where('id', $id)
+            ->update([
+                       'estado' => $request->estado,
+                    ]);
+            
+            $process = Process::find($id);              
+
+            return response()->json([
+                'error' => false,
+                'mensaje' => 'Proceso Actualizado',
+                'data' => $process
             ]);
         
         } catch (\Illuminate\Database\QueryException $e){

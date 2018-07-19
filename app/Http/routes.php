@@ -56,6 +56,7 @@ Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::get('porCiudad/{id}', 'ProcessesController@porCiudad');
     Route::get('porEstado/{id}', 'ProcessesController@porEstado');
     Route::put('update/{id}', 'ProcessesController@update');
+    Route::put('update/status/{id}', 'ProcessesController@updateStatus');
     Route::delete('delete/{id}/{user_id}', 'ProcessesController@delete');
     Route::post('create', 'ProcessesController@create');        
 });
@@ -115,9 +116,9 @@ Route::group(['prefix' => 'adjuntos', 'middleware' => 'cors'], function() {
     Route::get('allAdjuntos/{id}', 'AdjuntoController@allAdjuntos');
     Route::get('paginate/{desde}', 'AdjuntoController@paginate');
     Route::get('getAdjunto/{id}', 'AdjuntoController@getAdjunto');
-    Route::put('update/{id}', 'AdjuntoController@update');
+    Route::put('update/{platform}/{id}', 'AdjuntoController@update');
     Route::delete('delete/{adjunto_id}/{proceso_id}', 'AdjuntoController@delete');
-    Route::post('create', 'AdjuntoController@create');        
+    Route::post('create/{platform}', 'AdjuntoController@create');        
 });
 
 //GRUPO DE RUTAS PARA VER IMAGENES
