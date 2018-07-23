@@ -127,4 +127,12 @@ Route::group(['prefix' => 'images', 'middleware' => 'cors'], function() {
     Route::get('users/{archivo}', 'ImagenController@users');
 });
 
+// GRUPO DE RUTAS PARA DESCARGAR PDF´s
+Route::group(['prefix' => 'download', 'middleware' => 'cors'], function() {
+    Route::get('procesos/{id}', 'pdfController@procesos');
+});
+
+
+
+
 
