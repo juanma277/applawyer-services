@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Mis Procesos</title>
+    <title>Actuaciones</title>
     <link rel="stylesheet" type="text/css" href="css/app.css">
   </head>
   <body>
@@ -22,10 +22,12 @@
 
     <hr>
 
-    <div>
-        @foreach($usuario as $user)
-            <div>{{$user->nombre}}<div>
-            <div>{{$user->email}}</div>
+    <div class="datosProceso">
+        @foreach($datosProceso as $data)
+            <div>{{$data->radicado}}<div>
+            <div>{{$data->ciudad}} - {{$data->juzgado}}</div>
+            <div>{{$data->demandante}} - {{$data->demandado}}</div>
+            <div>{{$data->fecha}}</div>
         @endforeach
     </div>
 
@@ -34,23 +36,17 @@
     <table>
         <thead>
             <tr>
-                <th bgcolor="#90CEF7">Radicado</th>
-                <th bgcolor="#90CEF7">Demandante</th>
-                <th bgcolor="#90CEF7">Demandado</th>
-                <th bgcolor="#90CEF7">Tipo Proceso</th>
-                <th bgcolor="#90CEF7">Juzgado</th>
-                <th bgcolor="#90CEF7">Estado</th>
+                <th bgcolor="#90CEF7">Actuación</th>
+                <th bgcolor="#90CEF7">Anotación</th>
+                <th bgcolor="#90CEF7">Fecha</th>
             </tr>    
         </thead>
         <tbody>
             @foreach($process as $proceso)
                 <tr>
-                    <td>{{$proceso->radicado}}</td>
-                    <td>{{$proceso->demandante}}</td>
-                    <td>{{$proceso->demandado}}</td>
-                    <td>{{$proceso->tipo}}</td>
-                    <td>{{$proceso->juzgado}}</td>
-                    <td>{{$proceso->estado}}</td>
+                    <td>{{$proceso->actuacion}}</td>
+                    <td>{{$proceso->anotacion}}</td>
+                    <td>{{$proceso->fecha}}</td>
                 </tr>
             @endforeach
         </tbody>        

@@ -148,6 +148,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
         Barryvdh\DomPDF\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
 
@@ -198,7 +199,7 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
         'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
         'PDF' => Barryvdh\DomPDF\Facade::class,
-
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

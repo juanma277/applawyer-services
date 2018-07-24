@@ -127,9 +127,13 @@ Route::group(['prefix' => 'images', 'middleware' => 'cors'], function() {
     Route::get('users/{archivo}', 'ImagenController@users');
 });
 
-// GRUPO DE RUTAS PARA DESCARGAR PDF´s
+// GRUPO DE RUTAS PARA DESCARGAR PDF´s y XLS
 Route::group(['prefix' => 'download', 'middleware' => 'cors'], function() {
-    Route::get('procesos/{id}', 'pdfController@procesos');
+    Route::get('PDF/procesos/{id}', 'pdfController@procesosPDF');
+    Route::get('XLS/procesos/{id}', 'pdfController@procesosXLS');
+    Route::get('PDF/actuacionProceso/{id}', 'pdfController@actuacionPDF');
+    Route::get('XLS/actuacionProceso/{id}', 'pdfController@actuacionXLS');
+
 });
 
 
