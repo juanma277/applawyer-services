@@ -43,7 +43,31 @@ class UserController extends Controller
     // =========================================
     public function paginate($desde=0)
     {   
-        $users = DB::select('SELECT * from users LIMIT 10 OFFSET '.$desde);
+        $users = DB::select('SELECT id, nombre, imagen, email, direccion, telefono, descripcion, profesion, notificaciones, terminos, role, estado FROM users LIMIT 10 OFFSET '.$desde);
+        $cuentaUsers = DB::select('SELECT * FROM users ');
+
+        if(empty($users)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($users),
+                'mensaje' => 'No existen usuarios'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($users),
+            'total' => count($cuentaUsers),
+            'usuarios' => $users
+        ]);
+    }
+
+    // =========================================
+    // Buscar Usuario
+    // =========================================
+    public function searchUser($termino)
+    {   
+        $users = DB::select("SELECT id, nombre, imagen, email, direccion, telefono, descripcion, profesion, notificaciones, terminos, role, estado FROM users WHERE nombre LIKE '%".$termino."%' OR email LIKE '%".$termino."%' OR telefono LIKE '%".$termino."%'");
 
         if(empty($users)){
             return response()->json([
@@ -134,7 +158,10 @@ class UserController extends Controller
                         'telefono' => $request->telefono,
                         'profesion' => $request->profesion,
                         'descripcion' => $request->descripcion,
-                        'notificaciones' => $request->notificaciones
+                        'notificaciones' => $request->notificaciones,
+                        'estado' => $request->estado,
+                        'terminos' => $request->terminos,
+                        'role' => $request->role
                     ]);
 
             $user = User::find($id);
@@ -152,6 +179,7 @@ class UserController extends Controller
             ]);
         }
     }
+
 
     // =========================================
     // Actualizar Contraseña de Usuario

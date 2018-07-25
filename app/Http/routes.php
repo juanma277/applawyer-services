@@ -26,6 +26,7 @@ Route::group(['prefix' => 'login', 'middleware' => 'cors'], function() {
 Route::group(['prefix' => 'users', 'middleware' => 'cors'], function() {
     Route::get('all', 'UserController@all');
     Route::get('paginate/{desde}', 'UserController@paginate');
+    Route::get('searchUser/{termino}', 'UserController@searchUser');
     Route::get('getUser/{id}', 'UserController@getUser');
     Route::put('update/{id}', 'UserController@update');
     Route::put('updateImagen/{id}/{platform}', 'UserController@updateImagen');
