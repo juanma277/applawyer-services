@@ -37,11 +37,13 @@ class ProcessesController extends Controller
     // =========================================
     // Obtener todos los procesos de un usuario
     // =========================================
-    public function allUsuer($id)
+    public function allUser($id, $desde)
     {
-        $process = DB::select("SELECT proceso.id,proceso.demandante,proceso.demandado,proceso.radicado,proceso.fecha,juzgado.nombre AS juzgado,tipo_proceso.nombre AS tipo,
+        $process = DB::select("SELECT proceso.id, proceso.demandante, proceso.demandado, proceso.radicado, proceso.fecha, juzgado.nombre AS juzgado,tipo_proceso.nombre AS tipo,
         (SELECT CONCAT(historial_proceso.actuacion,'*',historial_proceso.anotacion,'*',historial_proceso.fecha) FROM historial_proceso WHERE historial_proceso.proceso_id = proceso.id order by historial_proceso.fecha DESC LIMIT 1) as historico,
-        (SELECT COUNT(1) FROM historial_proceso WHERE historial_proceso.proceso_id = proceso.id) AS actuaciones FROM proceso  JOIN juzgado ON (proceso.juzgado_id = juzgado.id) JOIN tipo_proceso ON (proceso.tipo_proceso_id = tipo_proceso.id) WHERE proceso.user_id =".$id);
+        (SELECT COUNT(1) FROM historial_proceso WHERE historial_proceso.proceso_id = proceso.id) AS actuaciones FROM proceso  JOIN juzgado ON (proceso.juzgado_id = juzgado.id) JOIN tipo_proceso ON (proceso.tipo_proceso_id = tipo_proceso.id) WHERE proceso.user_id =".$id." LIMIT 10 OFFSET ".$desde);
+
+        $cuenta = DB::select("SELECT id FROM proceso WHERE proceso.user_id =".$id);
 
         if(empty($process)){
             return response()->json([
@@ -55,7 +57,7 @@ class ProcessesController extends Controller
 
         return response()->json([
             'error' => false,
-            'cuenta' => count($process),
+            'cuenta' => count($cuenta),
             'process' => $process,
             'estados' => $procesoEstado
         ]);
@@ -179,7 +181,7 @@ class ProcessesController extends Controller
     public function create(Request $request)
     {   
         try {
-            $city = DB::table('proceso')->insert(
+            $process = DB::table('proceso')->insert(
                 [   'tipo_proceso_id' => $request->tipo_proceso,
                     'user_id' => $request->user, 
                     'juzgado_id' => $request->juzgado, 
@@ -201,6 +203,28 @@ class ProcessesController extends Controller
                 'mensaje' => 'Faltan datos requeridos o se encuentran duplicados'
             ]);
         }
+    }
+
+    // =========================================
+    // Buscar Proceso
+    // =========================================
+    public function searchProcesos($termino, $id)
+    {   
+        $process = DB::select("SELECT proceso.id, radicado, demandante, demandado, fecha, juzgado.nombre AS juzgado, tipo_proceso.nombre AS tipo, (SELECT CONCAT(historial_proceso.actuacion,'*',historial_proceso.anotacion,'*',historial_proceso.fecha) FROM historial_proceso WHERE historial_proceso.proceso_id = proceso.id order by historial_proceso.fecha DESC LIMIT 1) as historico FROM proceso JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) WHERE (radicado LIKE '%".$termino."%' OR demandante LIKE '%".$termino."%' OR tipo_proceso.nombre LIKE '%".$termino."%' OR juzgado.nombre LIKE '%".$termino."%' OR demandado LIKE '%".$termino."%') AND proceso.user_id = ".$id);
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen usuarios'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'procesos' => $process
+        ]);
     }
 
     // =========================================

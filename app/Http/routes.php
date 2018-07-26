@@ -50,8 +50,9 @@ Route::group(['prefix' => 'typeProcesses', 'middleware' => 'cors'], function() {
 Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::get('all', 'ProcessesController@all');
     Route::get('paginate/{desde}', 'ProcessesController@paginate');
+    Route::get('searchProcesos/{termino}/{id}', 'ProcessesController@searchProcesos');
     Route::get('getProcesses/{id}', 'ProcessesController@getProcesses');
-    Route::get('getProcessesUser/{id}', 'ProcessesController@allUsuer');
+    Route::get('getProcessesUser/{id}/{desde}', 'ProcessesController@allUser');
     Route::get('porJuzgado/{id}', 'ProcessesController@porJuzgado');
     Route::get('porTipo/{id}', 'ProcessesController@porTipo');
     Route::get('porCiudad/{id}', 'ProcessesController@porCiudad');
