@@ -40,6 +40,7 @@ Route::group(['prefix' => 'typeProcesses', 'middleware' => 'cors'], function() {
     Route::get('all', 'TypeProcessesController@all');
     Route::get('activos', 'TypeProcessesController@activos');
     Route::get('paginate/{desde}', 'TypeProcessesController@paginate');
+    Route::get('searchType/{termino}', 'TypeProcessesController@searchType');
     Route::get('getProcesses/{id}', 'TypeProcessesController@getProcesses');
     Route::put('update/{id}', 'TypeProcessesController@update');
     Route::delete('delete/{id}', 'TypeProcessesController@delete');
@@ -135,7 +136,10 @@ Route::group(['prefix' => 'download', 'middleware' => 'cors'], function() {
     Route::get('XLS/procesos/{id}', 'pdfController@procesosXLS');
     Route::get('PDF/actuacionProceso/{id}', 'pdfController@actuacionPDF');
     Route::get('XLS/actuacionProceso/{id}', 'pdfController@actuacionXLS');
-
+    Route::get('PDF/usuarios', 'pdfController@usuariosPDF');
+    Route::get('XLS/usuarios', 'pdfController@usuariosXLS');
+    Route::get('PDF/tipos', 'pdfController@tiposPDF');
+    Route::get('XLS/tipos', 'pdfController@tiposXLS');
 });
 
 

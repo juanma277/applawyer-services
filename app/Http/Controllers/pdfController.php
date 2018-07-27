@@ -47,7 +47,36 @@ class pdfController extends Controller
         return $pdf->download('actuacion.pdf');
     }
 
+    public function usuariosPDF(){
 
+        $users = DB::select("SELECT * FROM users");
+
+        if(empty($users)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existen usuarios',
+            ]);
+        }
+
+        $pdf = \PDF::loadView('pdf.usuarios', ['users' => $users]);
+        return $pdf->download('usuarios.pdf');
+    }
+
+
+    public function tiposPDF(){
+
+        $types = DB::select("SELECT * FROM tipo_proceso");
+
+        if(empty($types)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existen tipos de procesos',
+            ]);
+        }
+
+        $pdf = \PDF::loadView('pdf.tipos', ['types' => $types]);
+        return $pdf->download('tipos.pdf');
+    }
 
     public function procesosXLS($id){
 
@@ -79,6 +108,32 @@ class pdfController extends Controller
                 $data2= json_decode( json_encode($datosProceso), true);
 
                 $sheet->fromArray($data, $data2);             
+            });
+        })->export('xls');
+    }
+
+    public function usuariosXLS(){
+
+        \Excel::create('Usuarios', function($excel){
+            $excel->sheet('Usuarios', function($sheet){
+                
+                $users = DB::select("SELECT id, nombre, email, direccion, telefono, descripcion, profesion, role, estado, created_at, updated_at FROM users" );
+                //DATA
+                $data= json_decode( json_encode($users), true);
+                $sheet->fromArray($data);             
+            });
+        })->export('xls');
+    }
+
+    public function tiposXLS(){
+
+        \Excel::create('Tipos', function($excel){
+            $excel->sheet('Tipos', function($sheet){
+                
+                $types = DB::select("SELECT id, nombre, abreviatura, estado, created_at, updated_at FROM tipo_proceso" );
+                //DATA
+                $data= json_decode( json_encode($types), true);
+                $sheet->fromArray($data);             
             });
         })->export('xls');
     }

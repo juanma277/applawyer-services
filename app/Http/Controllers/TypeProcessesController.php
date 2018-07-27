@@ -79,15 +79,39 @@ class TypeProcessesController extends Controller
     }
 
     // =========================================
+    // Buscar Tipo
+    // =========================================
+    public function searchType($termino)
+    {   
+        $types = DB::select("SELECT id, nombre, abreviatura, estado FROM tipo_proceso WHERE nombre LIKE '%".$termino."%' OR abreviatura LIKE '%".$termino."%' OR estado LIKE '%".$termino."%'");
+
+        if(empty($types)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($users),
+                'mensaje' => 'No existen Tipos de Proceso'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($types),
+            'types' => $types
+        ]);
+    }
+
+    // =========================================
     // Crear Tipo de Proceso
     // =========================================
     public function create(Request $request)
     {   
         try {
             $type = DB::table('tipo_proceso')->insert(
-                [   'nombre' => $request->nombre, 
-                    ]
-                );
+                [   
+                    'nombre' => $request->nombre, 
+                    'abreviatura' => $request->abreviatura,
+                    'estado' => $request->estado                 
+                ]);
 
             return response()->json([
                 'error' => false,
@@ -139,8 +163,10 @@ class TypeProcessesController extends Controller
         try {
             $type = DB::table('tipo_proceso')
             ->where('id', $id)
-            ->update(['nombre' => $request->nombre, 
-                      'estado' => $request->estado,
+            ->update([
+                        'nombre' => $request->nombre, 
+                        'abreviatura' => $request->abreviatura,
+                        'estado' => $request->estado,
                     ]);
 
             return response()->json([
