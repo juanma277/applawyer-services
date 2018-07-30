@@ -40,6 +40,7 @@ class CiudadController extends Controller
     public function paginate($desde=0)
     {   
         $cities = DB::select('SELECT * from ciudad LIMIT 10 OFFSET '.$desde);
+        $cuentaCities = DB::select('SELECT * FROM ciudad ');
 
         if(empty($cities)){
             return response()->json([
@@ -52,6 +53,7 @@ class CiudadController extends Controller
         return response()->json([
             'error' => false,
             'cuenta' => count($cities),
+            'total' => count($cuentaCities),
             'cities' => $cities
         ]);
     }
@@ -79,15 +81,38 @@ class CiudadController extends Controller
     }
 
     // =========================================
+    // Buscar Ciudad
+    // =========================================
+    public function searchCity($termino)
+    {   
+        $cities = DB::select("SELECT id, nombre, estado FROM ciudad WHERE nombre LIKE '%".$termino."%' OR estado LIKE '%".$termino."%'");
+
+        if(empty($cities)){
+            return response()->json([
+                'error' => true,    
+                'cuenta' => count($cities),
+                'mensaje' => 'No existen Tipos de Proceso'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($cities),
+            'cities' => $cities
+        ]);
+    }
+
+    // =========================================
     // Crear ciudad
     // =========================================
     public function create(Request $request)
     {   
         try {
             $city = DB::table('ciudad')->insert(
-                [   'nombre' => $request->nombre, 
-                    ]
-                );
+                [  
+                    'nombre' => $request->nombre,
+                    'estado' => $request->estado,
+                ]);
 
             return response()->json([
                 'error' => false,
@@ -139,8 +164,9 @@ class CiudadController extends Controller
         try {
             $city = DB::table('ciudad')
             ->where('id', $id)
-            ->update(['nombre' => $request->nombre, 
-                      'estado' => $request->estado,
+            ->update([
+                        'nombre' => $request->nombre, 
+                        'estado' => $request->estado,
                     ]);
 
             return response()->json([

@@ -84,6 +84,7 @@ class CourtController extends Controller
     public function paginate($desde=0)
     {   
         $courts = DB::select('SELECT * from juzgado LIMIT 10 OFFSET '.$desde);
+        $cuentaCourts = DB::select('SELECT * FROM juzgado ');
 
         if(empty($courts)){
             return response()->json([
@@ -96,6 +97,7 @@ class CourtController extends Controller
         return response()->json([
             'error' => false,
             'cuenta' => count($courts),
+            'total' => count($cuentaCourts),
             'courts' => $courts
         ]);
     }
@@ -107,8 +109,11 @@ class CourtController extends Controller
     {   
         try {
             $court = DB::table('juzgado')->insert(
-                [   'nombre' => $request->nombre,
-                    'ciudad_id' => $request->ciudad
+                [  
+                    'nombre' => $request->nombre,
+                    'abreviatura' => $request->abreviatura,
+                    'ciudad_id' => $request->ciudad,
+                    'estado' => $request->estado,
                 ]);
 
             return response()->json([
@@ -123,6 +128,29 @@ class CourtController extends Controller
             ]);
         }
     }
+
+    // =========================================
+    // Buscar Juzgado
+    // =========================================
+    public function searchCourt($termino)
+    {   
+        $courts = DB::select("SELECT juzgado.nombre, juzgado.abreviatura, ciudad.id AS ciudad_id, juzgado.estado, juzgado.id FROM juzgado JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE (juzgado.nombre LIKE '%".$termino."%' OR juzgado.abreviatura LIKE '%".$termino."%' OR ciudad.nombre LIKE '%".$termino."%' OR juzgado.estado LIKE '%".$termino."%')");
+        
+        if(empty($courts)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($courts),
+                'mensaje' => 'No existen Tipos de Proceso'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($courts),
+            'courts' => $courts
+        ]);
+    }
+
 
     // =========================================
     // Obtener Juzgado
@@ -161,8 +189,11 @@ class CourtController extends Controller
         try {
             $court = DB::table('juzgado')
             ->where('id', $id)
-            ->update([   'nombre' => $request->nombre,
-                         'ciudad_id' => $request->ciudad
+            ->update([   
+                        'nombre' => $request->nombre,
+                        'abreviatura' => $request->abreviatura,
+                        'ciudad_id' => $request->ciudad,
+                        'estado' => $request->estado
                     ]);
 
             return response()->json([

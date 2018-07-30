@@ -51,6 +51,7 @@ Route::group(['prefix' => 'typeProcesses', 'middleware' => 'cors'], function() {
 Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::get('all', 'ProcessesController@all');
     Route::get('paginate/{desde}', 'ProcessesController@paginate');
+    Route::get('searchProccess/{termino}', 'ProcessesController@searchProccess');
     Route::get('searchProcesos/{termino}/{id}', 'ProcessesController@searchProcesos');
     Route::get('getProcesses/{id}', 'ProcessesController@getProcesses');
     Route::get('getProcessesUser/{id}/{desde}', 'ProcessesController@allUser');
@@ -61,6 +62,7 @@ Route::group(['prefix' => 'processes', 'middleware' => 'cors'], function() {
     Route::put('update/{id}', 'ProcessesController@update');
     Route::put('update/status/{id}', 'ProcessesController@updateStatus');
     Route::delete('delete/{id}/{user_id}', 'ProcessesController@delete');
+    Route::delete('deleteAdmin/{id}', 'ProcessesController@deleteAdmin');
     Route::post('create', 'ProcessesController@create');        
 });
 
@@ -70,6 +72,7 @@ Route::group(['prefix' => 'court', 'middleware' => 'cors'], function() {
     Route::get('activos', 'CourtController@activos');
     Route::get('cities/{id}', 'CourtController@courtCities');
     Route::get('paginate/{desde}', 'CourtController@paginate');
+    Route::get('searchCourt/{termino}', 'CourtController@searchCourt');
     Route::get('getCourt/{id}', 'CourtController@getCourt');
     Route::put('update/{id}', 'CourtController@update');
     Route::delete('delete/{id}', 'CourtController@delete');
@@ -91,6 +94,7 @@ Route::group(['prefix' => 'cities', 'middleware' => 'cors'], function() {
     Route::get('all', 'CiudadController@all');
     Route::get('activos', 'CiudadController@activos');
     Route::get('paginate/{desde}', 'CiudadController@paginate');
+    Route::get('searchCity/{termino}', 'CiudadController@searchCity');
     Route::get('getCities/{id}', 'CiudadController@getCities');
     Route::put('update/{id}', 'CiudadController@update');
     Route::delete('delete/{id}', 'CiudadController@delete');
@@ -140,6 +144,10 @@ Route::group(['prefix' => 'download', 'middleware' => 'cors'], function() {
     Route::get('XLS/usuarios', 'pdfController@usuariosXLS');
     Route::get('PDF/tipos', 'pdfController@tiposPDF');
     Route::get('XLS/tipos', 'pdfController@tiposXLS');
+    Route::get('PDF/juzgados', 'pdfController@juzgadosPDF');
+    Route::get('XLS/juzgados', 'pdfController@juzgadosXLS'); 
+    Route::get('PDF/Aprocesos', 'pdfController@AprocesosPDF');
+    Route::get('XLS/Aprocesos', 'pdfController@AprocesosXLS');  
 });
 
 

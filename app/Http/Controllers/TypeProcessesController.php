@@ -62,6 +62,7 @@ class TypeProcessesController extends Controller
     public function paginate($desde=0)
     {   
         $types = DB::select('SELECT * from tipo_proceso LIMIT 10 OFFSET '.$desde);
+        $cuentaTypes = DB::select('SELECT * FROM tipo_proceso ');
 
         if(empty($types)){
             return response()->json([
@@ -74,6 +75,7 @@ class TypeProcessesController extends Controller
         return response()->json([
             'error' => false,
             'cuenta' => count($types),
+            'total' => count($cuentaTypes),
             'types' => $types
         ]);
     }
@@ -88,7 +90,7 @@ class TypeProcessesController extends Controller
         if(empty($types)){
             return response()->json([
                 'error' => true,
-                'cuenta' => count($users),
+                'cuenta' => count($types),
                 'mensaje' => 'No existen Tipos de Proceso'
             ]);
         }

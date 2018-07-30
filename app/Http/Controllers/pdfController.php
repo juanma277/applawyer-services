@@ -78,6 +78,40 @@ class pdfController extends Controller
         return $pdf->download('tipos.pdf');
     }
 
+    public function juzgadosPDF(){
+
+        $courts = DB::select("SELECT juzgado.nombre, juzgado.abreviatura, ciudad.nombre AS ciudad, juzgado.estado, juzgado.id FROM juzgado JOIN ciudad ON (ciudad.id = juzgado.ciudad_id)");
+
+        if(empty($courts)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existen Juzgados',
+            ]);
+        }
+
+        $pdf = \PDF::loadView('pdf.juzgados', ['courts' => $courts]);
+        return $pdf->download('juzgados.pdf');
+    }
+
+    public function AprocesosPDF(){
+
+        $process = DB::select("SELECT proceso.radicado, users.nombre AS usuario, proceso.demandante, proceso.demandado, proceso.fecha, tipo_proceso.nombre AS tipo, juzgado.nombre AS juzgado, proceso.estado from proceso JOIN tipo_proceso ON(tipo_proceso.id = proceso.tipo_proceso_id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN users ON (users.id = proceso.user_id)");
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen procesos'
+            ]);
+        }
+
+        $pdf = \PDF::loadView('pdf.procesosAdmin', ['process' => $process]);
+        return $pdf->download('procesos.pdf');
+    }
+
+
+    //////////////////////////////////////////////////XLS/////////////////////////////////////////////
+
     public function procesosXLS($id){
 
         $nombre = '';
@@ -117,7 +151,7 @@ class pdfController extends Controller
         \Excel::create('Usuarios', function($excel){
             $excel->sheet('Usuarios', function($sheet){
                 
-                $users = DB::select("SELECT id, nombre, email, direccion, telefono, descripcion, profesion, role, estado, created_at, updated_at FROM users" );
+                $users = DB::select("SELECT id, nombre, email, direccion, telefono, descripcion, profesion, role, estado, created_at, updated_at FROM users");
                 //DATA
                 $data= json_decode( json_encode($users), true);
                 $sheet->fromArray($data);             
@@ -130,9 +164,35 @@ class pdfController extends Controller
         \Excel::create('Tipos', function($excel){
             $excel->sheet('Tipos', function($sheet){
                 
-                $types = DB::select("SELECT id, nombre, abreviatura, estado, created_at, updated_at FROM tipo_proceso" );
+                $types = DB::select("SELECT id, nombre, abreviatura, estado, created_at, updated_at FROM tipo_proceso");
                 //DATA
                 $data= json_decode( json_encode($types), true);
+                $sheet->fromArray($data);             
+            });
+        })->export('xls');
+    }
+
+    public function juzgadosXLS(){
+
+        \Excel::create('Juzgados', function($excel){
+            $excel->sheet('Juzgados', function($sheet){
+                
+                $courts = DB::select("SELECT juzgado.nombre, juzgado.abreviatura, ciudad.nombre AS ciudad, juzgado.estado FROM juzgado JOIN ciudad ON (ciudad.id = juzgado.ciudad_id)");
+                //DATA
+                $data= json_decode( json_encode($courts), true);
+                $sheet->fromArray($data);             
+            });
+        })->export('xls');
+    }
+
+    public function AprocesosXLS(){
+
+        \Excel::create('Procesos', function($excel){
+            $excel->sheet('Procesos', function($sheet){
+                
+                $process = DB::select("SELECT proceso.radicado, users.nombre AS usuario, proceso.demandante, proceso.demandado, proceso.fecha, tipo_proceso.nombre AS tipo, juzgado.nombre AS juzgado, proceso.estado from proceso JOIN tipo_proceso ON(tipo_proceso.id = proceso.tipo_proceso_id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN users ON (users.id = proceso.user_id)");
+                //DATA
+                $data= json_decode( json_encode($process), true);
                 $sheet->fromArray($data);             
             });
         })->export('xls');

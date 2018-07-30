@@ -68,7 +68,8 @@ class ProcessesController extends Controller
     // =========================================
     public function paginate($desde=0)
     {   
-        $process = DB::select('SELECT * from proceso LIMIT 10 OFFSET '.$desde);
+        $process = DB::select('SELECT proceso.id, tipo_proceso.id AS tipo, users.nombre AS user, juzgado.id AS juzgado, juzgado.ciudad_id AS ciudad, proceso.demandante, proceso.demandado, proceso.radicado, proceso.fecha, proceso.estado FROM proceso JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) JOIN users ON (users.id = proceso.user_id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) LIMIT 10 OFFSET '.$desde);
+        $cuentaProcess = DB::select('SELECT * from proceso');
 
         if(empty($process)){
             return response()->json([
@@ -81,6 +82,7 @@ class ProcessesController extends Controller
         return response()->json([
             'error' => false,
             'cuenta' => count($process),
+            'total' => count($cuentaProcess),
             'process' => $process
         ]);
     }
@@ -171,6 +173,28 @@ class ProcessesController extends Controller
             'error' => false,
             'cuenta' => count($process),
             'process' => $process
+        ]);
+    }
+
+    // =========================================
+    // Buscar Proceso
+    // =========================================
+    public function searchProccess($termino)
+    {   
+        $process = DB::select("SELECT proceso.id, ciudad.id AS ciudad, tipo_proceso.id AS tipo, juzgado.id AS juzgado, users.nombre AS user, proceso.demandante, proceso.demandado, proceso.radicado, proceso.fecha, proceso.estado FROM proceso JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN users ON (users.id = proceso.user_id) JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE ciudad.nombre LIKE '%".$termino."%' OR tipo_proceso.nombre LIKE '%".$termino."%' OR juzgado.nombre LIKE '%".$termino."%' OR users.nombre LIKE '%".$termino."%' OR proceso.demandante LIKE '%".$termino."%' OR proceso.demandado LIKE '%".$termino."%' OR proceso.radicado LIKE '%".$termino."%' OR proceso.fecha LIKE '%".$termino."%' OR proceso.estado LIKE '%".$termino."%'");
+
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'cuenta' => count($process),
+                'mensaje' => 'No existen Procesos'
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'cuenta' => count($process),
+            'procesos' => $process
         ]);
     }
 
@@ -267,13 +291,14 @@ class ProcessesController extends Controller
         try {
             $process = DB::table('proceso')
             ->where('id', $id)
-            ->update([  'tipo_proceso_id' => $request->tipo_proceso,
-                        'user_id' => $request->user, 
+            ->update([  
+                        'tipo_proceso_id' => $request->tipo_proceso,
                         'juzgado_id' => $request->juzgado, 
                         'demandante' => $request->demandante, 
                         'demandado' => $request->demandado,
                         'radicado' => $request->radicado, 
-                        'fecha' => $request->fecha
+                        'fecha' => $request->fecha,
+                        'estado'=>$request->estado
                     ]);
 
             return response()->json([
@@ -331,12 +356,12 @@ class ProcessesController extends Controller
     // =========================================
     public function delete($id, $user_id)
     {  
-        //VERIFICAR QUE EXISTE EL PROCESO
+        //VERIFICAR QUE EXISTE PROCESO
         $process = Process::find($id);
         if(empty($process)){
             return response()->json([
                 'error' => true,
-                'mensaje' => 'No existe proceso'
+                'mensaje' => 'No existe Proceso'
             ]);
         }
 
@@ -349,6 +374,37 @@ class ProcessesController extends Controller
                 'error' => false,
                 'mensaje' => 'Proceso Eliminado',
                 'procesos' => $process
+            ]);
+        
+        } catch (\Illuminate\Database\QueryException $e){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'Ha ocurrido un error por favor intentalo nuevamente'
+            ]);
+        }
+    }
+
+    // =========================================
+    // Eliminar Proceso - desde Admin
+    // =========================================
+    public function deleteAdmin($id)
+    {  
+        //VERIFICAR QUE EXISTE EL PROCESO
+        $process = Process::find($id);
+        if(empty($process)){
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'No existe el Proceso',
+                'id' => 'id : '+$id
+            ]);
+        }
+
+        try {
+            DB::table('proceso')->where('id', '=', $id)->delete();
+
+            return response()->json([
+                'error' => false,
+                'mensaje' => 'Proceso Eliminado'
             ]);
         
         } catch (\Illuminate\Database\QueryException $e){
