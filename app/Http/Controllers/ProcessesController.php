@@ -240,7 +240,7 @@ class ProcessesController extends Controller
             return response()->json([
                 'error' => true,
                 'cuenta' => count($process),
-                'mensaje' => 'No existen usuarios'
+                'mensaje' => 'No existen procesos'
             ]);
         }
 
@@ -257,9 +257,9 @@ class ProcessesController extends Controller
     public function getProcesses($id)
     {   
         $datosProceso = DB::select("SELECT proceso.radicado, proceso.demandante, proceso.demandado, proceso.fecha, proceso.estado, juzgado.nombre AS juzgado, ciudad.nombre as ciudad, tipo_proceso.nombre AS tipo FROM proceso JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE proceso.id =".$id);
-        $process = DB::select("SELECT proceso.radicado, juzgado.nombre AS juzgado, tipo_proceso.nombre AS tipo, proceso.demandante, proceso.demandado, proceso.fecha, historial_proceso.actuacion, historial_proceso.anotacion, historial_proceso.fecha FROM proceso JOIN historial_proceso ON (historial_proceso.proceso_id = proceso.id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.juzgado_id) WHERE proceso.id =".$id ." ORDER BY historial_proceso.fecha DESC");
+        $historial = DB::select("SELECT * FROM `historial_proceso` WHERE historial_proceso.proceso_id =".$id." ORDER BY historial_proceso.fecha DESC");
 
-        if(empty($process)){
+        if(empty($historial)){
             return response()->json([
                 'error' => true,
                 'mensaje' => 'El proceso no tiene historial',
@@ -269,7 +269,7 @@ class ProcessesController extends Controller
 
         return response()->json([
             'error' => false,
-            'process' => $process,
+            'process' => $historial,
             'data' => $datosProceso
         ]);
     }

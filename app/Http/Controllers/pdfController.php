@@ -33,7 +33,7 @@ class pdfController extends Controller
     public function actuacionPDF($id){
 
         $datosProceso = DB::select("SELECT proceso.radicado, proceso.demandante, proceso.demandado, proceso.fecha, proceso.estado, juzgado.nombre AS juzgado, ciudad.nombre as ciudad, tipo_proceso.nombre AS tipo FROM proceso JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE proceso.id =".$id);
-        $process = DB::select("SELECT proceso.radicado, juzgado.nombre AS juzgado, tipo_proceso.nombre AS tipo, proceso.demandante, proceso.demandado, proceso.fecha, historial_proceso.actuacion, historial_proceso.anotacion, historial_proceso.fecha FROM proceso JOIN historial_proceso ON (historial_proceso.proceso_id = proceso.id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.juzgado_id) WHERE proceso.id =".$id ." ORDER BY historial_proceso.fecha DESC");
+        $process = DB::select("SELECT * FROM `historial_proceso` WHERE historial_proceso.proceso_id =".$id." ORDER BY historial_proceso.fecha DESC");
 
         if(empty($process)){
             return response()->json([
@@ -136,7 +136,7 @@ class pdfController extends Controller
             $excel->sheet('Actuaciones', function($sheet) use ($id){
                 
                 $datosProceso = DB::select("SELECT proceso.radicado, proceso.demandante, proceso.demandado, proceso.fecha, proceso.estado, juzgado.nombre AS juzgado, ciudad.nombre as ciudad, tipo_proceso.nombre AS tipo FROM proceso JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.tipo_proceso_id) JOIN ciudad ON (ciudad.id = juzgado.ciudad_id) WHERE proceso.id =".$id);
-                $process = DB::select("SELECT proceso.radicado, juzgado.nombre AS juzgado, tipo_proceso.nombre AS tipo, proceso.demandante, proceso.demandado, proceso.fecha, historial_proceso.actuacion, historial_proceso.anotacion, historial_proceso.fecha FROM proceso JOIN historial_proceso ON (historial_proceso.proceso_id = proceso.id) JOIN juzgado ON (juzgado.id = proceso.juzgado_id) JOIN tipo_proceso ON (tipo_proceso.id = proceso.juzgado_id) WHERE proceso.id =".$id ." ORDER BY historial_proceso.fecha DESC");
+                $process = DB::select("SELECT proceso.radicado, proceso.demandante, proceso.demandado, historial_proceso.actuacion, historial_proceso.anotacion, historial_proceso.fecha FROM `historial_proceso` JOIN proceso ON (proceso.id = historial_proceso.proceso_id) WHERE historial_proceso.proceso_id =".$id." ORDER BY historial_proceso.fecha DESC");
                 //DATA
                 $data= json_decode( json_encode($process), true);
                 $data2= json_decode( json_encode($datosProceso), true);
