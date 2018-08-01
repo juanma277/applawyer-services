@@ -150,7 +150,14 @@ Route::group(['prefix' => 'download', 'middleware' => 'cors'], function() {
     Route::get('XLS/Aprocesos', 'pdfController@AprocesosXLS');  
 });
 
-
-
-
-
+// GRUPO DE RUTAS PARA NOTIFICACIONES
+Route::group(['prefix' => 'notifications', 'middleware' => 'cors'], function() {
+    Route::get('all', 'NotificacionController@all');
+    Route::get('activos', 'NotificacionController@activos');
+    Route::get('paginate/{desde}', 'NotificacionController@paginate');
+    Route::get('searchNotificacion/{termino}', 'NotificacionController@searchNotificacion');
+    Route::get('getNotificacion/{id}', 'NotificacionController@getNotificacion');
+    Route::put('update/{id}', 'NotificacionController@update');
+    Route::delete('delete/{notificacion_id}', 'NotificacionController@delete');
+    Route::post('create', 'NotificacionController@create'); 
+});
